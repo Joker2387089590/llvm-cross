@@ -1,0 +1,6 @@
+[submodule "musl"]
+	path = musl
+	url = git://git.musl-libc.org/musl
+[submodule "llvm-project"]
+	path = llvm-project
+	url = https://github.com/llvm/llvm-project.git
