@@ -1,5 +1,4 @@
 export SYSROOT=/mnt/sglib
-mkdir lib
 mkdir -p usr/local
 
 ln -s $SYSROOT/include include

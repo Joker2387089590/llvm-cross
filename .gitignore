@@ -1,8 +1,4 @@
-
-musl-1.2.3
-libucontext
-
-*-arm/
+arm-build
+arm-install
 install*/
-*.tar.gz
 *-Debug/
