@@ -2,7 +2,7 @@ set(CMAKE_SYSTEM_NAME Linux) # CMAKE_CROSSCOMPILING is set to ON automatically b
 set(CMAKE_SYSTEM_PROCESSOR arm)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
-set(CMAKE_TRY_COMPILE_TARGET_TYPE STATIC_LIBRARY) # magic option...
+# set(CMAKE_TRY_COMPILE_TARGET_TYPE STATIC_LIBRARY) # magic option...
 
 # set sysroot
 set(CMAKE_SYSROOT "/home/joker/repo/llvm/install")
@@ -23,12 +23,27 @@ set(CMAKE_C_COMPILER_TARGET   ${CLANG_TARGET_TRIPLE})
 set(CMAKE_CXX_COMPILER_TARGET ${CLANG_TARGET_TRIPLE})
 
 # use the custom built libc++
+set(CMAKE_INCLUDE_DIRECTORIES_BEFORE OFF)
+# include_directories(SYSTEM ${CMAKE_SYSROOT}/include)
+include_directories(SYSTEM ${CMAKE_SYSROOT}/include/c++/v1)
+# include_directories(SYSTEM ${CMAKE_SYSROOT}/usr/include) 
+link_directories(${CMAKE_SYSROOT}/lib)
+
+# add machine's search path
+# include_directories(AFTER SYSTEM ${CMAKE_SYSROOT}/usr/include/arm-linux-gnueabihf)
+
+set(CLANG_LINKER_FLAGS
+    "-fuse-ld=lld -rtlib=compiler-rt -unwindlib=libunwind \
+     -Wl,-rpath,${CMAKE_SYSROOT}/lib -lc++")
 set(CLANG_COMPILER_FLAGS 
     "-mcpu=cortex-a9 -mfpu=vfpv3-d16 -mfloat-abi=hard \
-     -nostdlib++ -isystem ${CMAKE_SYSROOT}/include/c++/v1")
-set(CLANG_LINKER_FLAGS 
-    "-fuse-ld=lld -rtlib=compiler-rt -unwindlib=libunwind \
-     -L ${CMAKE_SYSROOT}/lib -Wl,-rpath,${CMAKE_SYSROOT}/lib -lc++")
+     -nostdlib++")
+
+# add link flags to compile flags, will force clang use compiler-rt, but generate much warnings.
+option(MUSL_ARM_FORCE_USE_COMPILER_RT OFF)
+if(MUSL_ARM_FORCE_USE_COMPILER_RT)
+    set(CLANG_COMPILER_FLAGS "${CLANG_COMPILER_FLAGS} ${CLANG_LINKER_FLAGS}")
+endif()
 
 # let CMake use -std=c++** instead of -std=gnu++**
 set(CMAKE_C_EXTENSIONS OFF)

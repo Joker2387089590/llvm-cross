@@ -2,3 +2,4 @@ arm-build
 arm-install
 install*/
 *-Debug/
+*.tar
