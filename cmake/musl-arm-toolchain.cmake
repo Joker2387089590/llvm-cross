@@ -5,7 +5,15 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 # set(CMAKE_TRY_COMPILE_TARGET_TYPE STATIC_LIBRARY) # magic option...
 
 # set sysroot
-set(CMAKE_SYSROOT "/home/joker/repo/llvm/install")
+if(MUSL_ARM_EXPLICIT_SET_CMAKE_SYSROOT)
+    # When configuring Qt, it discards the CMAKE_SYSROOT from command-line arguments somewhere, which leading fail configuring.
+    set(CMAKE_SYSROOT ${MUSL_ARM_EXPLICIT_SET_CMAKE_SYSROOT})
+else()
+    if(NOT CMAKE_SYSROOT)
+        message(FATAL_ERROR "CMAKE_SYSROOT is not set!")
+    endif()
+endif()
+
 set(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
 set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
 set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
