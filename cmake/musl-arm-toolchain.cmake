@@ -2,16 +2,18 @@ set(CMAKE_SYSTEM_NAME Linux) # CMAKE_CROSSCOMPILING is set to ON automatically b
 set(CMAKE_SYSTEM_PROCESSOR arm)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
-# set(CMAKE_TRY_COMPILE_TARGET_TYPE STATIC_LIBRARY) # magic option...
 
-# set sysroot
-if(MUSL_ARM_EXPLICIT_SET_CMAKE_SYSROOT)
-    # When configuring Qt, it discards the CMAKE_SYSROOT from command-line arguments somewhere, which leading fail configuring.
-    set(CMAKE_SYSROOT ${MUSL_ARM_EXPLICIT_SET_CMAKE_SYSROOT})
+option(MUSL_ARM_STATIC_TRY_COMPILE ON)
+if(MUSL_ARM_STATIC_TRY_COMPILE)
+    set(CMAKE_TRY_COMPILE_TARGET_TYPE STATIC_LIBRARY) # magic option...
+endif()
+
+# set sysroot, get from environment
+if(EXISTS $ENV{MUSL_ARM_EXPLICIT_SET_CMAKE_SYSROOT} AND 
+   IS_DIRECTORY $ENV{MUSL_ARM_EXPLICIT_SET_CMAKE_SYSROOT})
+    set(CMAKE_SYSROOT $ENV{MUSL_ARM_EXPLICIT_SET_CMAKE_SYSROOT})
 else()
-    if(NOT CMAKE_SYSROOT)
-        message(FATAL_ERROR "CMAKE_SYSROOT is not set!")
-    endif()
+    message(FATAL_ERROR "Environment variable 'MUSL_ARM_EXPLICIT_SET_CMAKE_SYSROOT' is not set!")
 endif()
 
 set(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
