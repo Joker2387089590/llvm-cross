@@ -1,7 +1,7 @@
 cmake $SRCROOT/llvm-project/runtimes \
 -G Ninja \
 -D CMAKE_SYSROOT=$SYSROOT \
--D CMAKE_INSTALL_PREFIX=$SYSROOT/usr/local \
+-D CMAKE_INSTALL_PREFIX=$SYSROOT/usr/arm-linux-musleabihf \
 -D CMAKE_TOOLCHAIN_FILE=$SRCROOT/cmake/libcxx.cmake \
 -D LLVM_ENABLE_RUNTIMES="libunwind;libcxxabi;libcxx" \
 -D LIBUNWIND_USE_COMPILER_RT=ON \

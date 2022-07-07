@@ -24,6 +24,10 @@ set(CMAKE_ASM_FLAGS "${CMAKE_ASM_FLAGS} ${CLANG_TARGET_FLAGS}")
 set(CMAKE_C_FLAGS   "${CMAKE_C_FLAGS}   ${CLANG_TARGET_FLAGS}")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CLANG_TARGET_FLAGS}")
 
+set(MUSL_ARM_CUSTOM_LIB_DIR ${CMAKE_SYSROOT}/usr/arm-linux-musleabihf/lib)
+include_directories(SYSTEM ${CMAKE_SYSROOT}/usr/arm-linux-musleabihf/include)
+link_directories(${MUSL_ARM_CUSTOM_LIB_DIR})
+
 set(CLANG_LINKER_FLAGS "-fuse-ld=lld -rtlib=compiler-rt -unwindlib=none")
 set(CMAKE_EXE_LINKER_FLAGS    "${CMAKE_EXE_LINKER_FLAGS}    ${CLANG_LINKER_FLAGS}")
 set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} ${CLANG_LINKER_FLAGS}")

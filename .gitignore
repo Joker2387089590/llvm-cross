@@ -2,4 +2,6 @@ arm-build
 arm-install
 install*/
 *-Debug/
-*.tar
+root
+linux
+arm

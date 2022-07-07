@@ -1,9 +1,10 @@
 export COMPILER_FLAGS="--target=armv7a-unknown-linux-musleabihf -mcpu=cortex-a9 -mfloat-abi=hard -mfpu=vfpv3-d16 --sysroot=${SYSROOT}"
 
 $SRCROOT/musl/configure \
---prefix=$SYSROOT \
+--prefix=/usr \
+--includedir=/usr/include/arm-linux-musleabihf \
+--libdir=/usr/lib/arm-linux-musleabihf \
 --target=armv7a-unknown-linux-musleabihf \
---syslibdir=$SYSROOT/lib \
 ARCH=arm \
 CC=clang \
 CXX=clang++ \
@@ -15,3 +16,4 @@ LIBCC=/usr/lib/clang/$(llvm-config --version)/lib/linux/libclang_rt.builtins-arm
 CROSS_COMPILE=llvm- # check config.mak!!!
 
 # make
+# make DESTDIR=/home/joker/repo/llvm/root install
