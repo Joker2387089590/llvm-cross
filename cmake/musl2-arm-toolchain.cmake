@@ -40,17 +40,19 @@ set(CMAKE_C_COMPILER_TARGET   ${CLANG_TARGET_TRIPLE})
 set(CMAKE_CXX_COMPILER_TARGET ${CLANG_TARGET_TRIPLE})
 
 ### use the custom built libc and libc++
-set(MUSL_ARM_CUSTOM_LIBCXX_INCLUDE_DIR  ${CMAKE_SYSROOT}/usr/${CLANG_TARGET_TRIPLE}/include/c++/v1)
 set(MUSL_ARM_CUSTOM_INCLUDE_DIR         ${CMAKE_SYSROOT}/usr/${CLANG_TARGET_TRIPLE}/include)
+set(MUSL_ARM_SYSTEM_INCLUDE_DIR         ${CMAKE_SYSROOT}/usr/include)
+set(MUSL_ARM_CUSTOM_LIBCXX_INCLUDE_DIR  ${CMAKE_SYSROOT}/usr/${CLANG_TARGET_TRIPLE}/include/c++/v1)
 set(MUSL_ARM_CUSTOM_LIB_DIR             ${CMAKE_SYSROOT}/usr/${CLANG_TARGET_TRIPLE}/lib)
 
 # set include directories
-#   Note: C++ standard library headers should be included after C standard.
+#   Note: Headers from C++ standard library should be included after those from C standard library.
 #   For example, 'signbit'(in math.h) is required to be a macro in C standard.
 #   However, by writing another math.h as an overlay header, libc++ made it be a template,
 #   and use 'include_next' to import C 'math.h' for compatiable.
 include_directories(BEFORE SYSTEM
-    ${MUSL_ARM_CUSTOM_INCLUDE_DIR}
+    ${MUSL_ARM_CUSTOM_INCLUDE_DIR} # include musl libc headers before linux headers
+    ${MUSL_ARM_SYSTEM_INCLUDE_DIR}
     ${MUSL_ARM_CUSTOM_LIBCXX_INCLUDE_DIR})
 
 # specify cpu infos of target platform
@@ -59,7 +61,7 @@ set(CLANG_COMPILER_FLAGS
      -nostdlib++")
 
 # indicate clang to use llvm's components when linking
-# -Wl,-rpath,${MUSL_ARM_CUSTOM_LIB_DIR} 
+# -Wl,-rpath,${MUSL_ARM_CUSTOM_LIB_DIR}
 set(CLANG_LINKER_FLAGS
     "-L ${MUSL_ARM_CUSTOM_LIB_DIR} -lc++ \
      -fuse-ld=lld -rtlib=compiler-rt -unwindlib=libunwind")
