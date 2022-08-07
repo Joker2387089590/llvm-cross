@@ -1,8 +1,8 @@
-arm-build
-arm-install
+arm-build/
+arm-install/
 install*/
 *-Debug/
-root
-linux
-arm
-.vscode
+root/
+linux/
+arm/
+.vscode/

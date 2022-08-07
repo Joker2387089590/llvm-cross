@@ -30,20 +30,20 @@ set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
 set(CMAKE_FIND_ROOT_PATH_MODE_PACKAGE ONLY)
 
 ### set compiler as Clang
-set(CMAKE_ASM_COMPILER /bin/clang)
-set(CMAKE_C_COMPILER   /bin/clang)
-set(CMAKE_CXX_COMPILER /bin/clang++)
+set(CMAKE_ASM_COMPILER clang   CACHE FILEPATH)
+set(CMAKE_C_COMPILER   clang   CACHE FILEPATH)
+set(CMAKE_CXX_COMPILER clang++ CACHE FILEPATH)
 
 ### compiler target triple
 set(CLANG_TARGET_TRIPLE "arm-linux-musleabihf")
-set(CMAKE_ASM_COMPILER_TARGET ${CLANG_TARGET_TRIPLE})
-set(CMAKE_C_COMPILER_TARGET   ${CLANG_TARGET_TRIPLE})
-set(CMAKE_CXX_COMPILER_TARGET ${CLANG_TARGET_TRIPLE})
+set(CMAKE_ASM_COMPILER_TARGET ${CLANG_TARGET_TRIPLE} CACHE STRING)
+set(CMAKE_C_COMPILER_TARGET   ${CLANG_TARGET_TRIPLE} CACHE STRING)
+set(CMAKE_CXX_COMPILER_TARGET ${CLANG_TARGET_TRIPLE} CACHE STRING)
 
-# specify cpu infos of target platform
-set(CLANG_COMPILER_FLAGS
-    "-mcpu=cortex-a9 -mfpu=vfpv3-d16 -mfloat-abi=hard \
-     -nostdlib++") # use the custom built libc and libc++
+### use the custom built musl-libc and libc++
+set(MUSL_ARM_CUSTOM_INCLUDE_DIR         ${CMAKE_SYSROOT}/usr/${CLANG_TARGET_TRIPLE}/include)
+set(MUSL_ARM_CUSTOM_LIBCXX_INCLUDE_DIR  ${CMAKE_SYSROOT}/usr/${CLANG_TARGET_TRIPLE}/include/c++/v1)
+set(MUSL_ARM_CUSTOM_LIB_DIR             ${CMAKE_SYSROOT}/usr/${CLANG_TARGET_TRIPLE}/lib)
 
 # set include directories
 #   Note: Headers from C++ standard library should be included after those from C standard library.
@@ -60,11 +60,10 @@ set(CLANG_COMPILER_FLAGS
     -isystem${MUSL_ARM_CUSTOM_LIBCXX_INCLUDE_DIR}")
 
 # indicate clang to use llvm's components when linking
-set(MUSL_ARM_CUSTOM_LIB_DIR ${CMAKE_SYSROOT}/usr/${CLANG_TARGET_TRIPLE}/lib)
-# -Wl,-rpath,${MUSL_ARM_CUSTOM_LIB_DIR}
 set(CLANG_LINKER_FLAGS
     "-L ${MUSL_ARM_CUSTOM_LIB_DIR} -lc++ \
      -fuse-ld=lld -rtlib=compiler-rt -unwindlib=libunwind")
+# -Wl,-rpath,${MUSL_ARM_CUSTOM_LIB_DIR} 
 
 # append link flags to compile flags
 if(MUSL_ARM_FORCE_USE_COMPILER_RT)
@@ -73,6 +72,7 @@ if(MUSL_ARM_FORCE_USE_COMPILER_RT)
 endif()
 
 ### compiler flags
+
 # let CMake use -std=c++** instead of -std=gnu++**
 set(CMAKE_C_EXTENSIONS OFF)
 set(CMAKE_CXX_EXTENSIONS OFF)
