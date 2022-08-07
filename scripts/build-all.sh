@@ -1,5 +1,8 @@
 export SRCROOT=/home/joker/repo/llvm
 export SYSROOT=/home/joker/repo/llvm/arm-install
+
+# cd $SRCROOT/llvm-project; git checkout
+
 mkdir -p arm-build/compiler-rt arm-build/libcxx arm-install
 
 cd arm-install

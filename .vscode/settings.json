@@ -1,8 +1,0 @@
-{
-    "clangd.arguments": [
-        "--clang-tidy",
-        "-j=8",
-        "--background-index",
-        "--compile-commands-dir=${workspaceFolder}/test-Debug"
-    ]
-}
