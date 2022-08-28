@@ -17,7 +17,6 @@ export QT_TARGET_PATH=$QT_DIR/arm
 export QT_SOURCE_DIR=$QT_DIR/Src
 export MUSL_ARM_EXPLICIT_SET_CMAKE_SYSROOT=$SYSROOT
 
-
 $QT_SOURCE_DIR/configure \
 -cmake-generator Ninja \
 -prefix $QT_TARGET_PATH \
