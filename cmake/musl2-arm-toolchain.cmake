@@ -27,37 +27,44 @@ endif()
 set(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
 set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
 set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
-set(CMAKE_FIND_ROOT_PATH_MODE_PACKAGE ONLY)
+set(CMAKE_FIND_ROOT_PATH_MODE_PACKAGE BOTH) # enable find_package search custom CMAKE_PREFIX_PATH
 
 ### set compiler as Clang
-set(CMAKE_ASM_COMPILER clang   CACHE FILEPATH)
-set(CMAKE_C_COMPILER   clang   CACHE FILEPATH)
-set(CMAKE_CXX_COMPILER clang++ CACHE FILEPATH)
+set(CMAKE_ASM_COMPILER /bin/clang)
+set(CMAKE_C_COMPILER   /bin/clang)
+set(CMAKE_CXX_COMPILER /bin/clang++)
 
 ### compiler target triple
 set(CLANG_TARGET_TRIPLE "arm-linux-musleabihf")
-set(CMAKE_ASM_COMPILER_TARGET ${CLANG_TARGET_TRIPLE} CACHE STRING)
-set(CMAKE_C_COMPILER_TARGET   ${CLANG_TARGET_TRIPLE} CACHE STRING)
-set(CMAKE_CXX_COMPILER_TARGET ${CLANG_TARGET_TRIPLE} CACHE STRING)
+set(CMAKE_ASM_COMPILER_TARGET ${CLANG_TARGET_TRIPLE})
+set(CMAKE_C_COMPILER_TARGET   ${CLANG_TARGET_TRIPLE})
+set(CMAKE_CXX_COMPILER_TARGET ${CLANG_TARGET_TRIPLE})
 
 ### use the custom built musl-libc and libc++
-set(MUSL_ARM_CUSTOM_INCLUDE_DIR         ${CMAKE_SYSROOT}/usr/${CLANG_TARGET_TRIPLE}/include)
-set(MUSL_ARM_CUSTOM_LIBCXX_INCLUDE_DIR  ${CMAKE_SYSROOT}/usr/${CLANG_TARGET_TRIPLE}/include/c++/v1)
-set(MUSL_ARM_CUSTOM_LIB_DIR             ${CMAKE_SYSROOT}/usr/${CLANG_TARGET_TRIPLE}/lib)
+set(MUSL_ARM_CUSTOM_INCLUDE_DIR         ${CMAKE_SYSROOT}/include)
+set(MUSL_ARM_CUSTOM_LIBCXX_INCLUDE_DIR  ${CMAKE_SYSROOT}/include/c++/v1)
+set(MUSL_ARM_SYSTEM_INCLUDE_DIR         ${CMAKE_SYSROOT}/../include)
+set(MUSL_ARM_CUSTOM_LIB_DIR             ${CMAKE_SYSROOT}/lib)
 
 # set include directories
 #   Note: Headers from C++ standard library should be included after those from C standard library.
 #   For example, 'signbit'(in math.h) is required to be a macro in C standard.
 #   However, by writing another math.h as an overlay header, libc++ made it be a template,
 #   and use 'include_next' to import C 'math.h' for compatiable.
-set(MUSL_ARM_CUSTOM_INCLUDE_DIR         ${CMAKE_SYSROOT}/usr/${CLANG_TARGET_TRIPLE}/include)
-set(MUSL_ARM_SYSTEM_INCLUDE_DIR         ${CMAKE_SYSROOT}/usr/include)
-set(MUSL_ARM_CUSTOM_LIBCXX_INCLUDE_DIR  ${CMAKE_SYSROOT}/usr/${CLANG_TARGET_TRIPLE}/include/c++/v1)
+set(MUSL_ARM_CUSTOM_INCLUDE_DIR         ${CMAKE_SYSROOT}/include)
+set(MUSL_ARM_SYSTEM_INCLUDE_DIR         ${CMAKE_SYSROOT}/../include)
+set(MUSL_ARM_CUSTOM_LIBCXX_INCLUDE_DIR  ${CMAKE_SYSROOT}/include/c++/v1)
+cmake_path(NORMAL_PATH MUSL_ARM_SYSTEM_INCLUDE_DIR)
+
+set(CLANG_COMPILER_FLAGS
+    "-mcpu=cortex-a9 -mfpu=vfpv3-d16 -mfloat-abi=hard \
+     -nostdlib++")
+
 set(CLANG_COMPILER_FLAGS 
     "${CLANG_COMPILER_FLAGS} \
+    -isystem${MUSL_ARM_CUSTOM_LIBCXX_INCLUDE_DIR} \
     -isystem${MUSL_ARM_CUSTOM_INCLUDE_DIR} \
-    -isystem${MUSL_ARM_SYSTEM_INCLUDE_DIR} \
-    -isystem${MUSL_ARM_CUSTOM_LIBCXX_INCLUDE_DIR}")
+    -isystem${MUSL_ARM_SYSTEM_INCLUDE_DIR}")
 
 # indicate clang to use llvm's components when linking
 set(CLANG_LINKER_FLAGS
@@ -68,7 +75,7 @@ set(CLANG_LINKER_FLAGS
 # append link flags to compile flags
 if(MUSL_ARM_FORCE_USE_COMPILER_RT)
     # this will force clang to use compiler-rt, but may generate too many warnings.
-    set(CLANG_COMPILER_FLAGS "${CLANG_COMPILER_FLAGS} ${CLANG_LINKER_FLAGS}")
+    set(CLANG_COMPILER_FLAGS "${CLANG_COMPILER_FLAGS} ${CLANG_LINKER_FLAGS} -Wunused-command-line-argument")
 endif()
 
 ### compiler flags

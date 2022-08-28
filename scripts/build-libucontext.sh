@@ -1,4 +1,4 @@
-export COMPILER_FLAGS="--target=armv7a-unknown-linux-musleabihf -mcpu=cortex-a9 -mfloat-abi=hard -mfpu=vfpv3-d16 --sysroot=${SYSROOT} -fuse-ld=lld -rtlib=compiler-rt -unwindlib=libunwind"
+export COMPILER_FLAGS="--target=arm-linux-musleabihf -mcpu=cortex-a9 -mfloat-abi=hard -mfpu=vfpv3-d16 --sysroot=${SYSROOT} -fuse-ld=lld -rtlib=compiler-rt -unwindlib=libunwind"
 
 make \
 ARCH=arm \

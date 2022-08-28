@@ -1,7 +1,11 @@
-export QT_DIR=/opt/Qt/6.3.0
+export QT_DIR=/opt/Qt/6.3.1
+
 export QT_HOST_PATH=$QT_DIR/gcc_64
 export QT_TARGET_PATH=$QT_DIR/arm
 export QT_SOURCE_DIR=$QT_DIR/Src
+
+export SYSROOT=$SRCROOT/root/usr/arm-linux-musleabihf
+export MUSL_ARM_EXPLICIT_SET_CMAKE_SYSROOT=$SYSROOT
 
 $QT_SOURCE_DIR/configure \
 -cmake-generator Ninja \
@@ -17,9 +21,12 @@ $QT_SOURCE_DIR/configure \
 --zlib=qt \
 --doubleconversion=qt \
 -no-opengl \
+-tslib \
+-linuxfb \
 -- \
+-DCMAKE_PREFIX_PATH=$SYSROOT \
 -DCMAKE_SYSROOT=$SYSROOT \
--DCMAKE_TOOLCHAIN_FILE=$SRCROOT/cmake/musl-arm-toolchain.cmake \
+-DCMAKE_TOOLCHAIN_FILE=$SRCROOT/cmake/musl2-arm-toolchain.cmake \
 -DMUSL_ARM_FORCE_USE_COMPILER_RT=ON \
 -DQT_BUILD_EXAMPLES=OFF \
 -DQT_BUILD_TESTS=OFF \

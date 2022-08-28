@@ -1,19 +1,17 @@
-export COMPILER_FLAGS="--target=armv7a-unknown-linux-musleabihf -mcpu=cortex-a9 -mfloat-abi=hard -mfpu=vfpv3-d16 --sysroot=${SYSROOT}"
+export CLANG_TARGET="arm-linux-musleabihf"
+export CLANG_TARGET_FLAGS="-mcpu=cortex-a9 -mfloat-abi=hard -mfpu=vfpv3-d16"
+export CLANG_LINKER_FLAGS="-fuse-ld=lld -rtlib=compiler-rt -unwindlib=none"
+export COMPILER_FLAGS="--target=$CLANG_TARGET --sysroot=$SYSROOT $CLANG_TARGET_FLAGS"
 
 $SRCROOT/musl/configure \
---prefix=/usr \
---includedir=/usr/include/arm-linux-musleabihf \
---libdir=/usr/lib/arm-linux-musleabihf \
---target=armv7a-unknown-linux-musleabihf \
+--prefix=/usr/arm-linux-musleabihf \
+--target=arm-linux-musleabihf \
 ARCH=arm \
 CC=clang \
-CXX=clang++ \
+CROSS_COMPILE=llvm- \
 CFLAGS="$COMPILER_FLAGS" \
-CXXFLAGS="$COMPILER_FLAGS" \
-LDFLAGS="-fuse-ld=lld -rtlib=compiler-rt -unwindlib=none" \
-DESTDIR=$SYSROOT \
-LIBCC=/usr/lib/clang/$(llvm-config --version)/lib/linux/libclang_rt.builtins-armhf.a \
-CROSS_COMPILE=llvm- # check config.mak!!!
+LDFLAGS="$CLANG_LINKER_FLAGS" \
+LIBCC=/usr/lib/clang/$(llvm-config --version)/lib/linux/libclang_rt.builtins-armhf.a
 
 # make
-# make DESTDIR=/home/joker/repo/llvm/root install
+# make DESTDIR=$SRCROOT/root install

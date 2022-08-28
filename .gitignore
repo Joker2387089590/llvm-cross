@@ -6,3 +6,5 @@ root/
 linux/
 arm/
 .vscode/
+build/
+product/
