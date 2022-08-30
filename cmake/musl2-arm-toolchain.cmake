@@ -76,27 +76,34 @@ set(CLANG_USE_LIBCXX_COMPILER_FLAGS
 	 -isystem${MUSL_ARM_CUSTOM_INCLUDE_DIR} \
 	 -isystem${MUSL_ARM_SYSTEM_INCLUDE_DIR}"
 )
+# C compiler should not search for C++ headers
+set(CLANG_USE_MUSL_COMPILER_FLAGS
+	"-isystem${MUSL_ARM_CUSTOM_INCLUDE_DIR} \
+	 -isystem${MUSL_ARM_SYSTEM_INCLUDE_DIR}"
+)
 
 # library search directories
-set(MUSL_ARM_CUSTOM_LIB_DIR      ${CMAKE_SYSROOT}/lib)
+set(MUSL_ARM_CUSTOM_LIB_DIR ${CMAKE_SYSROOT}/lib)
 
 # indicate clang to use llvm's components when linking
 set(CLANG_USE_LLVM_LINKER_FLAGS
 	"-fuse-ld=lld -rtlib=compiler-rt -unwindlib=libunwind")
 
 ### final flags
-set(CLANG_COMPILER_FLAGS "${CLANG_PLATFORM_FLAGS} ${CLANG_USE_LIBCXX_COMPILER_FLAGS}")
+set(CLANG_C_COMPILER_FLAGS   "${CLANG_PLATFORM_FLAGS} ${CLANG_USE_MUSL_COMPILER_FLAGS}")
+set(CLANG_CXX_COMPILER_FLAGS "${CLANG_PLATFORM_FLAGS} ${CLANG_USE_LIBCXX_COMPILER_FLAGS}")
 set(CLANG_LINKER_FLAGS "${CLANG_USE_LLVM_LINKER_FLAGS} -L ${MUSL_ARM_CUSTOM_LIB_DIR} -lc++")
 
 # append link flags to compile flags if need
 if(MUSL_ARM_FORCE_USE_COMPILER_RT)
 	# this will force clang to use compiler-rt, but may generate too many warnings.
-	set(CLANG_COMPILER_FLAGS "${CLANG_COMPILER_FLAGS} ${CLANG_LINKER_FLAGS} -Wno-unused-command-line-argument")
+	set(CLANG_C_COMPILER_FLAGS   "${CLANG_C_COMPILER_FLAGS}   ${CLANG_LINKER_FLAGS} -Wno-unused-command-line-argument")
+	set(CLANG_CXX_COMPILER_FLAGS "${CLANG_CXX_COMPILER_FLAGS} ${CLANG_LINKER_FLAGS} -Wno-unused-command-line-argument")
 endif()
 
 set(CMAKE_ASM_FLAGS "${CMAKE_ASM_FLAGS} ${CLANG_COMPILER_FLAGS}")
-set(CMAKE_C_FLAGS   "${CMAKE_C_FLAGS}   ${CLANG_COMPILER_FLAGS}")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CLANG_COMPILER_FLAGS}")
+set(CMAKE_C_FLAGS   "${CMAKE_C_FLAGS}   ${CLANG_C_COMPILER_FLAGS}")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CLANG_CXX_COMPILER_FLAGS}")
 
 set(CMAKE_EXE_LINKER_FLAGS    "${CMAKE_EXE_LINKER_FLAGS}    ${CLANG_LINKER_FLAGS}")
 set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} ${CLANG_LINKER_FLAGS}")
