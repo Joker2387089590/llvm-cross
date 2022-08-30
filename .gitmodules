@@ -7,3 +7,6 @@
 [submodule "libucontext"]
 	path = libucontext
 	url = https://github.com/kaniini/libucontext.git
+[submodule "vcpkg"]
+	path = vcpkg
+	url = http://139.9.88.116:3000/r/module/vcpkg.git
